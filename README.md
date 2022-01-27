@@ -1,3 +1,5 @@
+# Difference with upstream: This fork obfuscates the environment variables!
+
 # Config variables for React Native apps
 
 Module to expose config variables to your javascript code in React Native, supporting iOS, Android and Windows.
@@ -21,8 +23,6 @@ import Config from "react-native-config";
 Config.API_URL; // 'https://myapi.com'
 Config.GOOGLE_MAPS_API_KEY; // 'abcdefgh'
 ```
-
-Keep in mind this module doesn't obfuscate or encrypt secrets for packaging, so **do not store sensitive keys in `.env`**. It's [basically impossible to prevent users from reverse engineering mobile app secrets](https://rammic.github.io/2015/07/28/hiding-secrets-in-android-apps/), so design your app (and APIs) with that in mind.
 
 ## Setup
 
@@ -132,7 +132,7 @@ Add this in `android/app/build.gradle`
 ```
 defaultConfig {
     ...
-    resValue "string", "build_config_package", "YOUR_PACKAGE_NAME_IN_ANDROIDMANIFEST.XML"
+    resValue "string", "build_config_package", "YOUR_PACKAGE_NAME_IN_ANDROIDMANIFEST_XML"
 }
 ```
 
@@ -306,6 +306,48 @@ Then edit the newly created scheme to make it use a different env file. From the
   cp "${PROJECT_DIR}/../.env.staging" "${PROJECT_DIR}/../.env"  # replace .env.staging for your file
   ```
 Also ensure that "Provide build settings from", just above the script, has a value selected so that PROJECT_DIR is set.
+
+Alternatively, if you have separated build configurations, you may easily set the different envfiles per configuration by adding these lines into the end of Podfile:
+
+```ruby
+ENVFILES = {
+  'Debug' => '$(PODS_ROOT)/../../.env.debug',
+  'Release' => '$(PODS_ROOT)/../../.env.production',
+}
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      if target.name == 'react-native-config'
+        config.build_settings['ENVFILE'] = ENVFILES[config.name]
+      end
+    end
+  end
+end
+```
+
+Note that if you have flipper enabled in your Podfile, you must move the `flipper_post_install` into the newely added hook since Podfile doesn't allow multiple `post_install` hooks.
+
+```diff
+  target 'MyApp' do
+    # ...
+    use_flipper!
+-   post_install do |installer|
+-     flipper_post_install(installer)
+-   end
+  end
+
+  post_install do |installer|
++   flipper_post_install(installer)
+
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        if target.name == 'react-native-config'
+          config.build_settings['ENVFILE'] = ENVFILES[config.name]
+        end
+      end
+    end
+  end
+```
 
 ## Troubleshooting
 
