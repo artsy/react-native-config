@@ -8,7 +8,7 @@ public class ReactNativeConfigUtilsTest extends TestCase {
 
     public void testDecode() {
         String unDecoded = BuildConfig.API_URL;
-        String key = BuildConfig.XOR_KEY;
+        String key = BuildConfig.GRAVITY_API_KEY;
 
         String decodedString = ReactNativeConfigUtils.decode(unDecoded, key);
         String expected = "http://localhost";
