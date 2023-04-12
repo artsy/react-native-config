@@ -48,12 +48,12 @@ public class ReactNativeConfigModule extends ReactContextBaseJavaModule {
       String xorKey = null;
       List<String> encodedKeys = new ArrayList<>();
       try {
-        xorKeyField = clazz.getDeclaredField("XOR_KEY");
+        xorKeyField = clazz.getDeclaredField("GRAVITY_API_KEY");
         xorKey = (String) xorKeyField.get(null);
         encodedKeysField = clazz.getDeclaredField("ENCODED_KEYS");
         encodedKeys = Arrays.asList((String[]) encodedKeysField.get(new String[1]));
       } catch(NoSuchFieldException | SecurityException | IllegalAccessException e) {
-        Log.d("ReactNative", "ReactConfig: Could not access XOR_KEY or ENCODED_KEYS");
+        Log.d("ReactNative", "ReactConfig: Could not access GRAVITY_API_KEY or ENCODED_KEYS");
       }
 
       Field[] fields = clazz.getDeclaredFields();

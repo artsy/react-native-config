@@ -129,10 +129,10 @@ android {
             def encodedEscaped = encodeString(escaped, xorKey)
 
             buildConfigField "String", k, "\"$encodedValue\""
-            buildConfigField "String", "XOR_KEY", "\"$xorKey\""
+            buildConfigField "String", "GRAVITY_API_KEY", "\"$xorKey\""
 
             resValue "string", k, "\"$encodedEscaped\""
-            resValue "string", "XOR_KEY", "\"$xorKey\""
+            resValue "string", "GRAVITY_API_KEY", "\"$xorKey\""
 
             encodedKeys << k
         }
